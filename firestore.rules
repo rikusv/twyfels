@@ -1,0 +1,51 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+  
+  
+  	function roles() {
+    	return get(/databases/$(database)/documents/users/$(request.auth.token.email)).data.roles
+    }
+    
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function hasReadPermission() {
+      return signedIn() && roles().read == true
+    }
+    
+    function hasWritePermission() {
+      return signedIn() && roles().write == true
+    }
+    
+    function hasAdminPermission() {
+      return signedIn() && roles().admin == true
+    }
+    
+    function hasReadOrHigherPermission() {
+    	return hasAdminPermission() || hasWritePermission() || hasReadPermission()
+    }
+    
+    function hasWriteOrHigherPermision() {
+    	return hasWritePermission() || hasReadPermission()
+    }
+
+    match /users/{user} {
+      allow read: if hasReadOrHigherPermission();
+      allow write: if hasAdminPermission();
+    }
+    
+    match /tree/{person} {
+    	allow list: if hasReadOrHigherPermission()
+      allow read: if hasReadOrHigherPermission();
+      allow write: if hasWriteOrHigherPermision();
+    }
+    
+    match /timeline/{event} {
+    	allow list: if hasReadOrHigherPermission()
+      allow read: if hasReadOrHigherPermission();
+      allow write: if hasWriteOrHigherPermision();
+    }
+  }
+}

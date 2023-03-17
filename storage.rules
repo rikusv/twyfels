@@ -1,0 +1,38 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+  
+  function roles() {
+    	return firestore.get(/databases/(default)/documents/users/$(request.auth.token.email)).data.roles
+    }
+    
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function hasReadPermission() {
+      return signedIn() && roles().read == true
+    }
+    
+    function hasWritePermission() {
+      return signedIn() && roles().write == true
+    }
+    
+    function hasAdminPermission() {
+      return signedIn() && roles().admin == true
+    }
+    
+    function hasReadOrHigherPermission() {
+    	return hasAdminPermission() || hasWritePermission() || hasReadPermission()
+    }
+    
+    function hasWriteOrHigherPermision() {
+    	return hasWritePermission() || hasReadPermission()
+    }
+    match /images/{name} {
+      allow list: if hasWriteOrHigherPermission()
+      allow read: if hasReadOrHigherPermission();
+      allow write: if hasWriteOrHigherPermision();
+    }
+  }
+}

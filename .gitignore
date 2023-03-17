@@ -1,0 +1,12 @@
+# NPM
+node_modules/
+
+# Svelte
+.svelte-kit
+
+# Firebase
+public/
+firebase-debug.log
+
+# MasOC
+.DS_Store
