@@ -5,10 +5,13 @@ import { addDoc, deleteDoc, collection, doc, query, setDoc, onSnapshot, WriteBat
 import { ref } from "firebase/storage"
 import { getStorageUrl } from './storage' 
 
+const dateFields: Array<'start_date' | 'end_date'> = ['start_date', 'end_date']
+const optionalDateParts: Array<'month' | 'day'> = ['month', 'day']
+
 export interface TimelineDate {
     year: number
-    month: number
-    day: number
+    month?: number
+    day?: number
 }
 
 export interface TimelineText {
@@ -40,8 +43,8 @@ export interface TimelineEventData {
 export const timelineEventData = (): TimelineEventData => ({
     start_date: {
         year: 2000,
-        month: 1,
-        day: 1
+        month: 0,
+        day: 0
     },
     text: {
         headline: "",
@@ -113,8 +116,16 @@ export class TimelineEvent {
         }
     }
 
-    get dataCopy(): TimelineEventData {
-        return { ...this.data }
+    get timelineJsData(): TimelineEventData {
+        const data = { ...this.data }
+        dateFields.forEach((dateField) => {
+            optionalDateParts.forEach((datePart) => {
+                if (data[dateField][datePart] === 0) {
+                    delete data[dateField][datePart]
+                }
+            })
+        })
+        return data
     }
 }
 
