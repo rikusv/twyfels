@@ -1,3 +1,7 @@
+<svelte:head>
+	<title>Twyfels Hayats</title>
+</svelte:head>
+
 <script>
 	import { onMount } from 'svelte'
 	
@@ -8,7 +12,6 @@
 	
 	onMount(async () => {
 		if (browser) {
-			// this works
 			await import('bootstrap/dist/css/bootstrap.min.css')
 			await import('bootstrap/dist/js/bootstrap.min.js')
 		}
