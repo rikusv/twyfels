@@ -20,6 +20,11 @@
 	</div>
 
 	<div class="input-group mb-2">
+		<span class="input-group-text">Group</span>
+		<input type="test" bind:value={data.group} class="form-control" />
+	</div>
+
+	<div class="input-group mb-2">
 		<span class="input-group-text">Start date</span>
 		<input
 			type="number"

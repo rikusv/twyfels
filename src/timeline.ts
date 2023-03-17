@@ -76,6 +76,15 @@ export class TimelineEvent {
     }
 
     async save() {
+        if (this.data.group === '') {
+            if (this.data.text.headline.includes(' born')) {
+                this.data.group = 'births'
+            } else if (this.data.text.headline.includes(' weds')) {
+                this.data.group = 'weddings'
+            } else if (this.data.text.headline.includes(' passes away')) {
+                this.data.group = 'wisals'
+            }
+        }
         if (this.mediaFiles && this.mediaFiles.length) {
             const name = this.mediaFiles[0].name.split(/(\\|\/)/g).pop()
             const fileRef = ref(firebaseStorage, `images/${name}`)
